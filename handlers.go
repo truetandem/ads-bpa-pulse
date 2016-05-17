@@ -2,11 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/PuerkitoBio/goquery"
+	"html/template"
 	"log"
 	"net/http"
 	"strings"
+)
 
-	"github.com/PuerkitoBio/goquery"
+var (
+	templates = template.Must(template.ParseFiles("index.html"))
 )
 
 // Update will scrape the source information for solicitations, compare them with
@@ -53,4 +57,8 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	// Return as JSON array
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
+}
+
+func Home(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "index.html", nil)
 }

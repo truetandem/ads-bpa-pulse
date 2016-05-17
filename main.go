@@ -8,6 +8,7 @@ import (
 
 func init() {
 	time.Local = time.UTC
+	http.HandleFunc("/", Home)
 	http.HandleFunc("/update", Update)
 }
 
