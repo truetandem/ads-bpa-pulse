@@ -1,0 +1,4 @@
+cron:
+  - description: "scrape for new solicitations"
+    url: /update
+    schedule: every 15 minutes from 06:00 to 20:00
