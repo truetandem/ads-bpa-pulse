@@ -22,3 +22,5 @@ _testmain.go
 *.exe
 *.test
 *.prof
+ads-bpa-pulse
+coverage.*
