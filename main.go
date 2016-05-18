@@ -10,6 +10,7 @@ func init() {
 	time.Local = time.UTC
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/update", Update)
+	http.HandleFunc("/subscribe", Subscribe)
 }
 
 func main() {

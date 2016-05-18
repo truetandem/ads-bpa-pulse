@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"time"
 
@@ -77,4 +78,8 @@ func (s *Subscription) ValidEmail() (bool, error) {
 		return false, ErrEmailInvalid
 	}
 	return true, nil
+}
+
+func (s *Subscription) String() string {
+	return fmt.Sprintf("Subscription - Email:  [%v] Modfied: [%v]", s.Email, s.Modified)
 }
