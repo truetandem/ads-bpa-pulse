@@ -1,14 +1,23 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"google.golang.org/appengine"
+	"google.golang.org/cloud/datastore"
 
 	"github.com/PuerkitoBio/goquery"
+)
+
+var (
+	templateEmailPlain = template.Must(template.ParseFiles("templates/email.txt"))
+	templateEmailHTML  = template.Must(template.ParseFiles("templates/email.html"))
 )
 
 // Update will scrape the source information for solicitations, compare them with
@@ -45,11 +54,18 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 		// If there is no title then we disregard the item
 		if s.Title != "" {
+			o, err := s.Get(ctx)
+
+			// If it never existed give it a time
+			if err == datastore.ErrNoSuchEntity {
+				s.Modified = time.Now()
+			}
+
 			// Check for an existing solicitation with a non-matching
 			// checksum of its properties.
-			u, err := s.Get(ctx)
-			if err == nil && s.Checksum() != u.Checksum() {
-				updates = append(updates, u)
+			if err == nil && s.Checksum() != o.Checksum() {
+				s.Modified = time.Now()
+				updates = append(updates, s)
 			}
 
 			// Save the solicitation
@@ -68,7 +84,21 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	if len(updates) > 0 {
 		subscriptions := Active(ctx)
 		if len(subscriptions) > 0 {
-			// TODO: Send emails here
+			var plain bytes.Buffer
+			err = templateEmailPlain.Execute(&plain, updates)
+
+			var html bytes.Buffer
+			err = templateEmailHTML.Execute(&html, updates)
+
+			if err == nil {
+				sendEmail(
+					r,
+					"no-reply@truetandem.com",
+					subscriptions,
+					"A pulse was identified for ADS-BPA",
+					plain.String(),
+					html.String())
+			}
 		}
 	}
 

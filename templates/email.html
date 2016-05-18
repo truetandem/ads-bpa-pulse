@@ -1,0 +1,11 @@
+{{ range . }}
+<h1>{{ .Title }}</h1>
+<ul>
+    {{ range $key, $value := .Properties  }}
+    <li><strong>{{ $key }}</strong>: {{ $value }}</li>
+    {{ end }}
+</ul>
+
+<hr />
+
+{{ end }}
