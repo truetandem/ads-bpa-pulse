@@ -27,6 +27,51 @@ func TestSubscriptionSave(t *testing.T) {
 	}
 }
 
+func TestSubscriptionGet(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+
+	email := "johnsflores@gmail.com"
+	s := Subscription{Email: email}
+	if _, err := s.Save(ctx); err != nil {
+		t.Fatalf("Unable to Save Subscrition [%v]", err)
+	}
+
+	s2 := Subscription{Email: email}
+	if _, err := s2.Get(ctx); err != nil {
+		t.Fatalf("Unable to retrieve subscription using email [%v]", s2.Email)
+	}
+
+	if s.Email != s2.Email {
+		t.Errorf("Subscription email mismatch. Expected [%v] Got [%v]", s.Email, s2.Email)
+	}
+
+	if s.Modified.Unix() != s2.Modified.Unix() {
+		t.Errorf("Subscription Modified mismatch. Expected [%v] Got [%v]", s.Modified, s2.Modified)
+	}
+}
+
+func TestSubscriptionSubscribe(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+	email := "winston@flores.org"
+
+	s := Subscription{Email: email}
+
+	if _, err := s.Subscribe(ctx); err != nil {
+		t.Fatalf("Could not subscribe user with email [%v] Err [%v]", s.Email, err)
+	}
+
+	s2 := Subscription{Email: email}
+	if _, err := s2.Subscribe(ctx); err == nil {
+		t.Fatalf("Subscribed multiple times using same email address. This should not happen")
+	} else {
+		if err != ErrSubscriptionExists {
+			t.Fatalf("Attempted to subscribe multiple times. Expected Err [%v] Got Err [%v]", ErrSubscriptionExists, err)
+		}
+	}
+}
+
 func TestSubscriptionValidEmail(t *testing.T) {
 	var emailTests = []struct {
 		email    string

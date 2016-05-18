@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	ErrEmailRequired = errors.New("Email is required to create new subscription")
-	ErrEmailInvalid  = errors.New("Email provided is invalid")
-	EmailRegexp      *regexp.Regexp
+	ErrEmailRequired      = errors.New("Email is required to create new subscription")
+	ErrEmailInvalid       = errors.New("Email provided is invalid")
+	ErrSubscriptionExists = errors.New("Email address already subscribed")
+	EmailRegexp           *regexp.Regexp
 )
 
 func init() {
@@ -39,6 +40,31 @@ func (s *Subscription) Save(ctx context.Context) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "Subscription", s.Email, 0, nil)
 	_, err := datastore.Put(ctx, key, s)
 	return key, err
+}
+
+// Retrieves a subscription using a users email address. Struct pointer is passed in
+// so current object gets populated with data
+func (s *Subscription) Get(ctx context.Context) (*datastore.Key, error) {
+	key := datastore.NewKey(ctx, "Subscription", s.Email, 0, nil)
+	return key, datastore.Get(ctx, key, s)
+}
+
+// Creates a new subscription for a particular email address. Ensures that a subscription
+// does not exist for the given email.
+func (s *Subscription) Subscribe(ctx context.Context) (*datastore.Key, error) {
+	// Attempt to retrieve subscription to see if one exists
+	if _, err := s.Get(ctx); err != nil {
+		// No entity found, so let's save!
+		if err == datastore.ErrNoSuchEntity {
+			return s.Save(ctx)
+		}
+
+		// Something else bad happened
+		return nil, err
+	}
+
+	// We have a datastore hit.
+	return nil, ErrSubscriptionExists
 }
 
 // Ensures that email provided is valid
