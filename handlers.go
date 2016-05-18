@@ -59,6 +59,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
+// Renders home page where user can subscribe and unsubscribe to BPA updates
 func Home(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "index.html", nil)
 }
