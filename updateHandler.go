@@ -64,6 +64,14 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 
+	// Notify subscribers of any updates
+	if len(updates) > 0 {
+		subscriptions := Active(ctx)
+		if len(subscriptions) > 0 {
+			// TODO: Send emails here
+		}
+	}
+
 	// Transform for JSON consumption
 	js, err := json.Marshal(solicitations)
 	if err != nil {
