@@ -1,23 +1,33 @@
+// +build appengine
+
 package main
 
 import (
 	"encoding/json"
-	"github.com/PuerkitoBio/goquery"
-	"html/template"
 	"log"
 	"net/http"
 	"strings"
-)
 
-var (
-	templates = template.Must(template.ParseFiles("index.html"))
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // Update will scrape the source information for solicitations, compare them with
 // previously stored results, and notify the subscribers.
 func Update(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	client := urlfetch.Client(ctx)
+	resp, err := client.Get("https://pages.18f.gov/ads-bpa/")
+	if err != nil {
+		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	// Query for the document to scrape
-	doc, err := goquery.NewDocument("https://pages.18f.gov/ads-bpa/")
+	doc, err := goquery.NewDocumentFromResponse(resp)
 	if err != nil {
 		log.Fatal(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,10 +66,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	// Return as JSON array
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
-}
-
-// Renders home page where user can subscribe and unsubscribe to BPA updates
-func Home(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "index.html", nil)
+	_, err = w.Write(js)
+	if err != nil {
+		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
