@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"google.golang.org/appengine/aetest"
+	"google.golang.org/appengine/datastore"
 )
 
 func TestSolicitationToString(t *testing.T) {
@@ -49,7 +50,7 @@ func TestSolicitationGet(t *testing.T) {
 	}
 
 	_, err = s.Get(ctx)
-	if err != nil {
+	if err != nil && err != datastore.ErrNoSuchEntity {
 		t.Fatal(err)
 	}
 }
@@ -68,6 +69,32 @@ func TestSolicitationSave(t *testing.T) {
 		},
 	}
 
+	err = s.Save(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSolicitationUpdate(t *testing.T) {
+	ctx, done, err := aetest.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer done()
+
+	s := Solicitation{
+		Title: "Test",
+		Properties: map[string]string{
+			"ID": "TBD",
+		},
+	}
+
+	err = s.Save(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s.Properties["ID"] = "TBD"
 	err = s.Save(ctx)
 	if err != nil {
 		t.Fatal(err)
