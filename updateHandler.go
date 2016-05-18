@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"google.golang.org/appengine"
-	"google.golang.org/cloud/datastore"
+	"google.golang.org/appengine/datastore"
 
 	"github.com/PuerkitoBio/goquery"
 )
