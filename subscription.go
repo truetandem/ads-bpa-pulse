@@ -12,22 +12,30 @@ import (
 )
 
 var (
-	ErrEmailRequired      = errors.New("Email is required to create new subscription")
-	ErrEmailInvalid       = errors.New("Email provided is invalid")
+	// ErrEmailRequired is the error message for required email
+	ErrEmailRequired = errors.New("Email is required to create new subscription")
+
+	// ErrEmailInvalid is the error message for an invalid email address
+	ErrEmailInvalid = errors.New("Email provided is invalid")
+
+	// ErrSubscriptionExists is the error message when the subscription already exists
 	ErrSubscriptionExists = errors.New("Email address already subscribed")
-	EmailRegexp           *regexp.Regexp
+
+	// EmailRegexp is the email regular expression
+	EmailRegexp *regexp.Regexp
 )
 
 func init() {
 	EmailRegexp = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 }
 
+// Subscription to recieve email notifications
 type Subscription struct {
 	Email    string
 	Modified time.Time
 }
 
-// Saves a new subscription. Makes sure that a valid email is passed in
+// Save a new subscription. Makes sure that a valid email is passed in
 func (s *Subscription) Save(ctx context.Context) (*datastore.Key, error) {
 	// Make sure user provides a valid email address
 	if valid, err := s.ValidEmail(); !valid {
@@ -43,14 +51,14 @@ func (s *Subscription) Save(ctx context.Context) (*datastore.Key, error) {
 	return key, err
 }
 
-// Retrieves a subscription using a users email address. Struct pointer is passed in
+// Get a subscription using a users email address. Struct pointer is passed in
 // so current object gets populated with data
 func (s *Subscription) Get(ctx context.Context) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "Subscription", s.Email, 0, nil)
 	return key, datastore.Get(ctx, key, s)
 }
 
-// Creates a new subscription for a particular email address. Ensures that a subscription
+// Subscribe for a particular email address. Ensures that a subscription
 // does not exist for the given email.
 func (s *Subscription) Subscribe(ctx context.Context) (*datastore.Key, error) {
 	// Attempt to retrieve subscription to see if one exists
@@ -68,7 +76,7 @@ func (s *Subscription) Subscribe(ctx context.Context) (*datastore.Key, error) {
 	return nil, ErrSubscriptionExists
 }
 
-// Ensures that email provided is valid
+// ValidEmail ensures that email provided is valid
 func (s *Subscription) ValidEmail() (bool, error) {
 	if s.Email == "" {
 		return false, ErrEmailRequired
@@ -80,6 +88,24 @@ func (s *Subscription) ValidEmail() (bool, error) {
 	return true, nil
 }
 
+// Active subscriptions in the system
+func Active(ctx context.Context) []string {
+	emails := []string{}
+
+	q := datastore.NewQuery("Subscription").KeysOnly()
+	t := q.Run(ctx)
+	for {
+		key, err := t.Next(nil)
+		if err != nil {
+			break
+		}
+		emails = append(emails, key.StringID())
+	}
+
+	return emails
+}
+
+// Human friendly view of subscription to satisfy Stringer()
 func (s *Subscription) String() string {
 	return fmt.Sprintf("Subscription - Email:  [%v] Modfied: [%v]", s.Email, s.Modified)
 }

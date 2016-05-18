@@ -1,0 +1,10 @@
+{{ range . }}
+# {{ .Title }}</h1>
+
+{{ range $key, $value := .Properties  }}
+  - *{{ $key }}*: {{ $value }}
+{{ end }}
+
+--
+
+{{ end }}

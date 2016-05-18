@@ -15,7 +15,7 @@ func TestSubscriptionSave(t *testing.T) {
 	key, err := s.Save(ctx)
 
 	if err != nil {
-		t.Fatal("Unable to Save Subscription [%v]\n", err)
+		t.Fatalf("Unable to Save Subscription [%v]\n", err)
 	}
 
 	if key == nil {
@@ -91,5 +91,25 @@ func TestSubscriptionValidEmail(t *testing.T) {
 		if valid, err := s.ValidEmail(); valid != test.expected {
 			t.Errorf("Email [%v] expected to be [%v] but got [%v]. Err [%v]", test.email, test.expected, valid, err)
 		}
+	}
+}
+
+func TestSubscriptionActive(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+
+	a := len(Active(ctx))
+	if a != 0 {
+		t.Fatalf("No active subscriptions should be found but found %v", a)
+	}
+
+	s := Subscription{Email: "winston@flores.org"}
+	if _, err := s.Subscribe(ctx); err != nil {
+		t.Fatalf("Could not subscribe user with email [%v] Err [%v]", s.Email, err)
+	}
+
+	a = len(Active(ctx))
+	if a != 1 {
+		t.Fatalf("Only one subscription should be found but found %v", a)
 	}
 }
