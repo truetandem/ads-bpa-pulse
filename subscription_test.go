@@ -38,6 +38,7 @@ func TestSubscriptionValidEmail(t *testing.T) {
 		{"johnsfloresgmail.com", false},
 		{"johnsflores@", false},
 		{"johnsflores@blah", false},
+		{"", false},
 	}
 
 	for _, test := range emailTests {
