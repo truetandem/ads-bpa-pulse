@@ -51,6 +51,12 @@ func (s *Subscription) Save(ctx context.Context) (*datastore.Key, error) {
 	return key, err
 }
 
+// Delete an existing subscription.
+func (s *Subscription) Delete(ctx context.Context) error {
+	key := datastore.NewKey(ctx, "Subscription", s.Email, 0, nil)
+	return datastore.Delete(ctx, key)
+}
+
 // Get a subscription using a users email address. Struct pointer is passed in
 // so current object gets populated with data
 func (s *Subscription) Get(ctx context.Context) (*datastore.Key, error) {
@@ -74,6 +80,16 @@ func (s *Subscription) Subscribe(ctx context.Context) (*datastore.Key, error) {
 
 	// We have a datastore hit.
 	return nil, ErrSubscriptionExists
+}
+
+// Unsubscribe an existing email address.
+func (s *Subscription) Unsubscribe(ctx context.Context) error {
+	// Attempt to retrieve subscription to see if one exists
+	if _, err := s.Get(ctx); err != nil {
+		return err
+	}
+
+	return s.Delete(ctx)
 }
 
 // ValidEmail ensures that email provided is valid

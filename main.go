@@ -11,6 +11,7 @@ func init() {
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/subscribe", Subscribe)
+	http.HandleFunc("/unsubscribe", Subscribe)
 }
 
 func main() {
