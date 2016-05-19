@@ -72,6 +72,24 @@ func TestSubscriptionSubscribe(t *testing.T) {
 	}
 }
 
+func TestSubscriptionUnsubscribe(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+	email := "winston@flores.org"
+
+	s := Subscription{Email: email}
+
+	if _, err := s.Subscribe(ctx); err != nil {
+		t.Fatalf("Could not subscribe user with email [%v] Err [%v]", s.Email, err)
+	}
+
+	s2 := Subscription{Email: email}
+	if err := s2.Unsubscribe(ctx); err != nil {
+		t.Fatalf("Could not unsubscribe user with email [%v] Err [%v]", s2.Email, err)
+	}
+
+}
+
 func TestSubscriptionValidEmail(t *testing.T) {
 	var emailTests = []struct {
 		email    string
@@ -111,5 +129,26 @@ func TestSubscriptionActive(t *testing.T) {
 	a = len(Active(ctx))
 	if a != 1 {
 		t.Fatalf("Only one subscription should be found but found %v", a)
+	}
+}
+
+func TestSubscriptionDelete(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+	email := "winston@flores.org"
+
+	s := Subscription{Email: email}
+
+	if _, err := s.Subscribe(ctx); err != nil {
+		t.Fatalf("Could not subscribe user with email [%v] Err [%v]", s.Email, err)
+	}
+
+	s2 := Subscription{Email: email}
+	if err := s2.Delete(ctx); err != nil {
+		t.Fatalf("Could not delete subscription ` with email [%v] Err [%v]", s2.Email, err)
+	}
+
+	if _, err := s2.Get(ctx); err == nil {
+		t.Fatalf("Expected Subscription to be deleted but found one")
 	}
 }
