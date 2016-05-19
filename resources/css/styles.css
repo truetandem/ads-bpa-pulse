@@ -16,6 +16,43 @@ html, body {
 		margin: 0 auto;
 	}
 }
+
+.row {
+	display: flex;
+}
+.box {
+	flex-grow:1;
+}
+.box-spacer {
+	width:2px;
+	background-color: #323a45;
+	margin-right: 6px;
+	margin-left: 6px;
+}
+.pulse {
+
+	vertical-align: top;
+	font-size: 46px;
+	color: #0071bc;
+}
+.ads-ns {
+	color: white;
+	font-size: 14px;
+	text-align: left;
+	margin-top: 15px;
+}
+.unsubscribe {
+	color: #e5e5e5;
+	font-size: 11px;
+}
+.unsubscribe a,
+.unsubscribe a:active,
+.unsubscribe a:visited,
+.unsubscribe a:hover
+{
+	color: #0071bc;
+	text-decoration: none;
+}
 .text-center {
 	text-align: center;
 }
@@ -56,7 +93,7 @@ input.email {
 	height: 10px;
 }
 .success {
-	color: #2e8540;
+	color: #4aa564;
 }
 .fail {
 	color:#e59393;

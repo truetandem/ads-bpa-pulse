@@ -18,7 +18,9 @@ var pulser = {
 			var $unsubscribeBtn = $('#unsubscribe');
 			var $emailInput = $('#email');
 			var $message = $('#message');
-			
+			var $unsubscribeLink = $('.unsubscribe');
+			var $form = $('#form');
+
 			// Validates email
 			var validate = function(email){
 				if(!email){
@@ -37,6 +39,8 @@ var pulser = {
 						statusCode: r.status,
 						message: data.Message
 				});
+				$emailInput.val('');
+				$form.hide();
 			};
 
 			// When subscribe/unsubscribe events go wrong, triggers message update
@@ -66,6 +70,10 @@ var pulser = {
 				pulser.unsubscribe(email).then(successHandler, errorHandler);
 			});
 
+			$unsubscribeLink.on('click', function(){
+				$subscribeBtn.hide();
+				$unsubscribeBtn.show();
+			});
 
 			// Handle message updates from other handlers. Listens when `$message` event is emitted
 			// and uses data in passed in payload to render information.

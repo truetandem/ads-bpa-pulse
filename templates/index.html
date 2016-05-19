@@ -9,12 +9,26 @@
 </head>
 <body>
 	<div class="container text-center">
-		<h1 class="header">Agile Delivery Services Pulse</h1>
+
+		<div class="row" style="margin-bottom:20px;margin-top:20px;">
+			<div class="box" style="text-align:right;">
+				<span class="pulse">pulse</span>
+			</div>
+			<div class="box-spacer">
+			</div>
+			<div class="box ads-ns">
+				Agile Delivery Services
+				<div>Notification System</div>
+			</div>
+		</div>
+
 		
 		<div class="content">
-			<div class="message-container">
-				<div id="message"></div>
+				<div class="message-container">
+					<div id="message"></div>
+				</div>
 			</div>
+		<div id="form" class="content">
 			<div>
 				<input placeholder="Enter your email" type="email" class="email" id="email"/>
 			</div>
@@ -23,7 +37,8 @@
 				<button id="subscribe" class="action-btn">Subscribe</button>
 			</div>
 			<div>
-				<button id="unsubscribe" class="action-btn">Unsubscribe</button>
+				<button id="unsubscribe" class="action-btn" style="display:none;background-color:#cd2026;border:transparent;">Unsubscribe</button>
+				<span class="unsubscribe">Or if you're already subscribed, you can <a href="javascript:;">unsubscribe here</a>.</span>
 			</div>
 		</div>
 	</div>
