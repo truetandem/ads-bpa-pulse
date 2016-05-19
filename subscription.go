@@ -21,6 +21,9 @@ var (
 	// ErrSubscriptionExists is the error message when the subscription already exists
 	ErrSubscriptionExists = errors.New("Email address already subscribed")
 
+	// ErrSubscriptionDoesNotExist is the error message when unscribing to an email that does not exist
+	ErrSubscriptionDoesNotExist = errors.New("Email address does not exist")
+
 	// EmailRegexp is the email regular expression
 	EmailRegexp *regexp.Regexp
 )
@@ -86,6 +89,9 @@ func (s *Subscription) Subscribe(ctx context.Context) (*datastore.Key, error) {
 func (s *Subscription) Unsubscribe(ctx context.Context) error {
 	// Attempt to retrieve subscription to see if one exists
 	if _, err := s.Get(ctx); err != nil {
+		if err == datastore.ErrNoSuchEntity {
+			return ErrSubscriptionDoesNotExist
+		}
 		return err
 	}
 
