@@ -10,15 +10,21 @@
 <body>
 	<div class="container text-center">
 		<h1 class="header">Agile Delivery Services Pulse</h1>
-		<div><input placeholder="Enter your email" type="email" class="email" id="email"/></div>
-		<div>
-			<span id="message"></span>
-		</div>
-		<div>
-			<button id="subscribe">Subscribe</button>
-		</div>
-		<div>
-			<button id="unsubscribe">Unsubscribe</button>
+		
+		<div class="content">
+			<div class="message-container">
+				<div id="message"></div>
+			</div>
+			<div>
+				<input placeholder="Enter your email" type="email" class="email" id="email"/>
+			</div>
+
+			<div>
+				<button id="subscribe" class="action-btn">Subscribe</button>
+			</div>
+			<div>
+				<button id="unsubscribe" class="action-btn">Unsubscribe</button>
+			</div>
 		</div>
 	</div>
     <canvas id="ecg"></canvas>
