@@ -12,20 +12,23 @@ func TestSubscriptionSave(t *testing.T) {
 	ctx, done, _ := aetest.NewContext()
 	defer done()
 
-	email := "johnsflores@gmail.com"
-	s := Subscription{Email: email}
-	key, err := s.Save(ctx)
-
-	if err != nil {
-		t.Fatalf("Unable to Save Subscription [%v]\n", err)
+	var tests = []struct {
+		Email         string
+		ExpectedError error
+	}{
+		{Email: "johnsflores@gmail.com", ExpectedError: nil},
+		{Email: "john", ExpectedError: ErrEmailInvalid},
+		{Email: "", ExpectedError: ErrEmailRequired},
 	}
 
-	if key == nil {
-		t.Fatal("Key was not set")
-	}
+	for _, test := range tests {
 
-	if key.StringID() != email {
-		t.Fatal("Key string id does not match email")
+		s := Subscription{Email: test.Email}
+		_, err := s.Save(ctx)
+
+		if err != test.ExpectedError {
+			t.Fatalf("Expected Error [%v] but got [%v]", test.ExpectedError, err)
+		}
 	}
 }
 

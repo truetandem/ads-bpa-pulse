@@ -24,6 +24,7 @@ func TestSubscribe(t *testing.T) {
 		{"GET", http.StatusMethodNotAllowed, nil},
 		{"POST", http.StatusInternalServerError, nil},
 		{"POST", http.StatusOK, url.Values{"email": {"johnsflores@gmail.com"}}},
+		{"POST", http.StatusInternalServerError, url.Values{"email": {"johnsflores@gmail.com"}}},
 	}
 
 	for _, test := range tests {
