@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"testing"
+	"time"
+
+	"golang.org/x/net/context"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
@@ -54,6 +57,7 @@ func TestSubscriptionGet(t *testing.T) {
 	if s.Modified.Unix() != s2.Modified.Unix() {
 		t.Errorf("Subscription Modified mismatch. Expected [%v] Got [%v]", s.Modified, s2.Modified)
 	}
+
 }
 
 func TestSubscriptionSubscribe(t *testing.T) {
@@ -77,6 +81,21 @@ func TestSubscriptionSubscribe(t *testing.T) {
 	}
 }
 
+func TestSubscriptionUnexpectedFailures(t *testing.T) {
+	ctx, done, _ := aetest.NewContext()
+	defer done()
+	ctx, _ = context.WithTimeout(ctx, time.Nanosecond)
+	email := "winston@flores.org"
+
+	s := Subscription{Email: email}
+
+	if _, err := s.Subscribe(ctx); err == nil {
+		t.Fatal("OMG This should have failed because context has timed out")
+	}
+	if err := s.Unsubscribe(ctx); err == nil {
+		t.Fatal("OMG This should have failed because context has timed out")
+	}
+}
 func TestSubscriptionUnsubscribe(t *testing.T) {
 	ctx, done, _ := aetest.NewContext()
 	defer done()
