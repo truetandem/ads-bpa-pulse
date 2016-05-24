@@ -7,7 +7,7 @@ import (
 	"google.golang.org/appengine/datastore"
 )
 
-func TestSolicitationToString(t *testing.T) {
+func TestSolicitationString(t *testing.T) {
 	expected := "Title: Test\n\n  - ID: TBD"
 	s := Solicitation{
 		Title: "Test",
@@ -16,7 +16,7 @@ func TestSolicitationToString(t *testing.T) {
 		},
 	}
 
-	if s.ToString() != expected {
+	if s.String() != expected {
 		t.FailNow()
 	}
 }

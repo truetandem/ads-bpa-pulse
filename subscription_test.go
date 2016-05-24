@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/aetest"
 )
 
@@ -88,6 +90,10 @@ func TestSubscriptionUnsubscribe(t *testing.T) {
 		t.Fatalf("Could not unsubscribe user with email [%v] Err [%v]", s2.Email, err)
 	}
 
+	s3 := Subscription{Email: "nonexistant@mail.com"}
+	if err := s3.Unsubscribe(ctx); err != ErrSubscriptionDoesNotExist {
+		t.FailNow()
+	}
 }
 
 func TestSubscriptionValidEmail(t *testing.T) {
@@ -113,19 +119,33 @@ func TestSubscriptionValidEmail(t *testing.T) {
 }
 
 func TestSubscriptionActive(t *testing.T) {
-	ctx, done, _ := aetest.NewContext()
-	defer done()
+	options := aetest.Options{
+		AppID: "testapp",
+		StronglyConsistentDatastore: true,
+	}
+	inst, err := aetest.NewInstance(&options)
+	if err != nil {
+		t.Fatalf("Failed to create instance: %v", err)
+	}
+	defer inst.Close()
 
+	r, err := inst.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+
+	ctx := appengine.NewContext(r)
 	a := len(Active(ctx))
 	if a != 0 {
 		t.Fatalf("No active subscriptions should be found but found %v", a)
 	}
 
 	s := Subscription{Email: "winston@flores.org"}
-	if _, err := s.Subscribe(ctx); err != nil {
+	if _, err := s.Save(ctx); err != nil {
 		t.Fatalf("Could not subscribe user with email [%v] Err [%v]", s.Email, err)
 	}
 
+	ctx = appengine.NewContext(r)
 	a = len(Active(ctx))
 	if a != 1 {
 		t.Fatalf("Only one subscription should be found but found %v", a)
@@ -150,5 +170,16 @@ func TestSubscriptionDelete(t *testing.T) {
 
 	if _, err := s2.Get(ctx); err == nil {
 		t.Fatalf("Expected Subscription to be deleted but found one")
+	}
+}
+
+func TestSubscriptionString(t *testing.T) {
+	s := Subscription{
+		Email: "string@test.com",
+	}
+	expected := fmt.Sprintf("Subscription - Email:  [%v] Modfied: [%v]", s.Email, s.Modified)
+
+	if s.String() != expected {
+		t.FailNow()
 	}
 }

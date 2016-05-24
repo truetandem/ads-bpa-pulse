@@ -20,8 +20,8 @@ type Solicitation struct {
 	properties []byte            `datastore:"Properties"`
 }
 
-// ToString returns the Solicitation as a formatted string.
-func (s *Solicitation) ToString() string {
+// String returns the Solicitation as a formatted string.
+func (s *Solicitation) String() string {
 	str := fmt.Sprintf("Title: %s\n", s.Title)
 	for k, v := range s.Properties {
 		str += fmt.Sprintf("\n  - %s: %s", k, v)
@@ -32,7 +32,7 @@ func (s *Solicitation) ToString() string {
 
 // Checksum returns the SHA-1 checksum of the Solicitation.
 func (s *Solicitation) Checksum() string {
-	return fmt.Sprintf("%x", sha1.Sum([]byte(s.ToString())))
+	return fmt.Sprintf("%x", sha1.Sum([]byte(s.String())))
 }
 
 // Get a Solicitation from the datastore.
