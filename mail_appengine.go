@@ -3,7 +3,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"google.golang.org/appengine"
@@ -11,7 +10,7 @@ import (
 )
 
 // sendEmail with the AppEngine API.
-func sendEmail(r *http.Request, from string, to []string, subject, body, html string) {
+func sendEmail(r *http.Request, from string, to []string, subject, body, html string) error {
 	// Use AppEngine to send our thank you cards
 	c := appengine.NewContext(r)
 	msg := &mail.Message{
@@ -22,7 +21,5 @@ func sendEmail(r *http.Request, from string, to []string, subject, body, html st
 		HTMLBody: html,
 	}
 
-	if err := mail.Send(c, msg); err != nil {
-		log.Printf("[ERROR] Could not send email: %v\n", err)
-	}
+	return mail.Send(c, msg)
 }

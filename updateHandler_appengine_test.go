@@ -45,6 +45,9 @@ func TestUpdateReturnsSolicitations(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	Update(w, r)
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected Status Code [%v] Got [%v]", w.Code, http.StatusOK)
+	}
 
 	dump, err := ioutil.ReadAll(w.Body)
 	if err != nil {
