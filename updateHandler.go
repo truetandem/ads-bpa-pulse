@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/context"
+
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
@@ -32,9 +34,41 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Loop through the document and parsing solicitations
+	ctx := appengine.NewContext(r)
+	updates, solicitations, err := parseDocument(ctx, doc)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Notify subscribers of any updates
+	err = notify(r, ctx, updates)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Transform for JSON consumption
+	js, err := json.Marshal(solicitations)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return as JSON array
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(js)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func parseDocument(ctx context.Context, doc *goquery.Document) ([]Solicitation, []Solicitation, error) {
 	updates := []Solicitation{}
 	solicitations := []Solicitation{}
-	ctx := appengine.NewContext(r)
+	var err error
+
 	doc.Find(".solicitation").Each(func(_ int, dl *goquery.Selection) {
 		s := Solicitation{
 			Properties: map[string]string{},
@@ -71,8 +105,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			// Save the solicitation
 			err = s.Save(ctx)
 			if err != nil {
-				log.Fatal(err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -80,42 +112,34 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 
-	// Notify subscribers of any updates
+	return updates, solicitations, err
+}
+
+func notify(r *http.Request, ctx context.Context, updates []Solicitation) error {
 	if len(updates) > 0 {
 		subscriptions := Active(ctx)
 		if len(subscriptions) > 0 {
 			var plain bytes.Buffer
-			err = templateEmailPlain.Execute(&plain, updates)
+			err := templateEmailPlain.Execute(&plain, updates)
+			if err != nil {
+				return err
+			}
 
 			var html bytes.Buffer
 			err = templateEmailHTML.Execute(&html, updates)
-
-			if err == nil {
-				sendEmail(
-					r,
-					"no-reply@truetandem.com",
-					subscriptions,
-					"A pulse was identified for ADS-BPA",
-					plain.String(),
-					html.String())
+			if err != nil {
+				return err
 			}
+
+			return sendEmail(
+				r,
+				"no-reply@truetandem.com",
+				subscriptions,
+				"A pulse was identified for ADS-BPA",
+				plain.String(),
+				html.String())
 		}
 	}
 
-	// Transform for JSON consumption
-	js, err := json.Marshal(solicitations)
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Return as JSON array
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(js)
-	if err != nil {
-		log.Fatal(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return nil
 }
