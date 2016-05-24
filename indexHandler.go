@@ -13,6 +13,5 @@ var (
 func Home(w http.ResponseWriter, r *http.Request) {
 	if err := templateIndex.ExecuteTemplate(w, "index.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
