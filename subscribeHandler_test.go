@@ -36,7 +36,6 @@ func TestSubscribe(t *testing.T) {
 				t.Errorf("Expected Status Code [%v] Got [%v]", w.Code, test.ExpectedCode)
 			}
 		} else {
-
 			t.Errorf("Unable to create request using Method [%v] Expected Code [%v] UrlValues [%v]", test.Method, test.ExpectedCode, test.URLValues)
 		}
 	}

@@ -7,8 +7,9 @@ import (
 	"google.golang.org/appengine"
 )
 
+// Subscribe handles a request to be notified via email of
+// new solicitations.
 func Subscribe(w http.ResponseWriter, r *http.Request) {
-
 	// Only allow POST requests since we're saving data
 	if r.Method != "POST" {
 		http.Error(w, "Invalid Method Type", http.StatusMethodNotAllowed)
@@ -16,11 +17,10 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse out email param
-	r.ParseForm()
+	_ = r.ParseForm()
 	email := r.FormValue("email")
 
 	s := Subscription{Email: email}
-
 	if valid, err := s.ValidEmail(); !valid {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,12 +35,14 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 
 	// Woop
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(struct {
-		Message string
-		Email   string
-	}{
+	m := message{
 		"Successfully subscribed",
 		s.Email,
-	})
+	}
 
+	err := json.NewEncoder(w).Encode(m)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

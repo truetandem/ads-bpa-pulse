@@ -62,7 +62,7 @@ func TestInvalidUnsubscribe(t *testing.T) {
 	tests := []struct {
 		Method       string
 		ExpectedCode int
-		UrlValues    url.Values
+		URLValues    url.Values
 	}{
 		{"GET", http.StatusMethodNotAllowed, nil},
 		{"POST", http.StatusInternalServerError, nil},
@@ -70,15 +70,14 @@ func TestInvalidUnsubscribe(t *testing.T) {
 
 	for _, test := range tests {
 		if r, err := inst.NewRequest(test.Method, "/unsubscribe", nil); err == nil {
-			r.Form = test.UrlValues
+			r.Form = test.URLValues
 			w := httptest.NewRecorder()
 			Unsubscribe(w, r)
 			if w.Code != test.ExpectedCode {
 				t.Errorf("Expected Status Code [%v] Got [%v]", w.Code, test.ExpectedCode)
 			}
 		} else {
-
-			t.Errorf("Unable to create request using Method [%v] Expected Code [%v] UrlValues [%v]", test.Method, test.ExpectedCode, test.UrlValues)
+			t.Errorf("Unable to create request using Method [%v] Expected Code [%v] UrlValues [%v]", test.Method, test.ExpectedCode, test.URLValues)
 		}
 	}
 }
