@@ -16,8 +16,8 @@ type Solicitation struct {
 	Title      string            `json:"title" datastore:"Title"`
 	Properties map[string]string `json:"properties" datastore:"-"`
 	Modified   time.Time         `json:"modified" datastore:"Modified,noindex"`
-	checksum   string            `datastore:"Checksum"`
-	properties []byte            `datastore:"Properties"`
+	Checksum   string            `datastore:"Checksum"`
+	JSON       []byte            `datastore:"Json"`
 }
 
 // String returns the Solicitation as a formatted string.
@@ -30,8 +30,8 @@ func (s *Solicitation) String() string {
 	return str
 }
 
-// Checksum returns the SHA-1 checksum of the Solicitation.
-func (s *Solicitation) Checksum() string {
+// Sum returns the SHA-1 checksum of the Solicitation.
+func (s *Solicitation) Sum() string {
 	return fmt.Sprintf("%x", sha1.Sum([]byte(s.String())))
 }
 
@@ -46,7 +46,7 @@ func (s *Solicitation) Get(ctx context.Context) (Solicitation, error) {
 	}
 
 	// Unmarshal the binary JSON and store it as a map
-	if err := json.Unmarshal(sol.properties, sol.Properties); err != nil {
+	if err := json.Unmarshal(sol.JSON, sol.Properties); err != nil {
 		return sol, err
 	}
 
@@ -57,7 +57,7 @@ func (s *Solicitation) Get(ctx context.Context) (Solicitation, error) {
 func (s *Solicitation) Save(ctx context.Context) error {
 	// Save the checksum to an internal variable for storage
 	// purposes
-	s.checksum = s.Checksum()
+	s.Checksum = s.Sum()
 
 	// Marshal the property map so we can save it as a binary
 	// field
@@ -65,7 +65,7 @@ func (s *Solicitation) Save(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	s.properties = js
+	s.JSON = js
 
 	// Create the key based on the title and store it
 	key := datastore.NewKey(ctx, "Solicitation", s.Title, 0, nil)

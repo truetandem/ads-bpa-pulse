@@ -30,7 +30,7 @@ func TestSolicitationChecksum(t *testing.T) {
 		},
 	}
 
-	if s.Checksum() != expected {
+	if s.Sum() != expected {
 		t.FailNow()
 	}
 }

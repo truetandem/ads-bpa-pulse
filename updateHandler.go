@@ -97,7 +97,7 @@ func parseDocument(ctx context.Context, doc *goquery.Document) ([]Solicitation, 
 
 			// Check for an existing solicitation with a non-matching
 			// checksum of its properties.
-			if err == nil && s.Checksum() != o.Checksum() {
+			if err == nil && s.Sum() != o.Sum() {
 				s.Modified = time.Now()
 				updates = append(updates, s)
 			}
