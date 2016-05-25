@@ -20,39 +20,56 @@ html, body {
 .row {
 	display: flex;
 }
+
 .box {
 	flex-grow:1;
 }
+
 .box-spacer {
 	width:2px;
 	background-color: #323a45;
-	margin-right: 6px;
-	margin-left: 6px;
+	/* margin-right: 6px; */
+	/* margin-left: 6px; */
+    margin-left: 15px;
+    margin-right: 15px;
 }
-.pulse {
 
+.pulse {
 	vertical-align: top;
 	font-size: 46px;
 	color: #0071bc;
 }
+
+.header {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.brand {
+    text-align: right;
+}
+
 .ads-ns {
 	color: white;
 	font-size: 14px;
 	text-align: left;
 	margin-top: 15px;
 }
-.unsubscribe {
+
+.toggle-action {
 	color: #e5e5e5;
 	font-size: 11px;
 }
-.unsubscribe a,
-.unsubscribe a:active,
-.unsubscribe a:visited,
-.unsubscribe a:hover
+
+.toggle-action a,
+.toggle-action a:active,
+.toggle-action a:visited,
+.toggle-action a:hover
 {
 	color: #0071bc;
 	text-decoration: none;
 }
+
 .text-center {
 	text-align: center;
 }
@@ -85,6 +102,13 @@ input.email {
 	height: 38px;
 }
 
+#unsubscribe {
+    display: none;
+    background-color: #cd2026;
+    border: transparent;
+}
+
+
 .message-container {
 	margin-bottom: 20px;
 }
@@ -92,9 +116,11 @@ input.email {
 #message {
 	height: 10px;
 }
+
 .success {
 	color: #4aa564;
 }
+
 .fail {
 	color:#e59393;
 }
@@ -105,7 +131,7 @@ input.email {
     left: 0;
     right: 0;
     color: #fff;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .footer a,

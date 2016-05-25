@@ -1,56 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>Agile Delivery Services Blanket Purchase Agreement</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="/resources/css/styles.css" rel="stylesheet" media="all">
-	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
-</head>
-<body>
-	<div class="container text-center">
+    <head>
+        <meta charset="utf-8">
+        <title>Agile Delivery Services Blanket Purchase Agreement</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/resources/css/styles.css" rel="stylesheet" media="all">
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div class="container text-center">
+            <div class="row header">
+                <div class="box brand">
+                    <span class="pulse">pulse</span>
+                </div>
+                <div class="box-spacer"></div>
+                <div class="box ads-ns">
+                    Agile Delivery Services
+                    <div>Notification System</div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="message-container">
+                    <div id="message"></div>
+                </div>
+            </div>
+            <div id="form" class="content">
+                <div>
+                    <input placeholder="Enter your email" type="email" class="email" id="email"/>
+                </div>
+                <div>
+                    <button id="subscribe" class="action-btn">Subscribe</button>
+                </div>
+                <div>
+                    <button id="unsubscribe" class="action-btn">Unsubscribe</button>
+                </div>
+                <div>
+                    <span class="toggle-action">Or if you're already subscribed, you can <a href="javascript:;">unsubscribe here</a>.</span>
+                </div>
+            </div>
+        </div>
+        <canvas id="ecg"></canvas>
+        <footer class="footer text-center">
+            Official Source - 
+            <a href="https://pages.18f.gov/ads-bpa" title="Agile Delivery Services">https://pages.18f.gov/ads-bpa</a>
+        </footer>
 
-		<div class="row" style="margin-bottom:20px;margin-top:20px;">
-			<div class="box" style="text-align:right;">
-				<span class="pulse">pulse</span>
-			</div>
-			<div class="box-spacer">
-			</div>
-			<div class="box ads-ns">
-				Agile Delivery Services
-				<div>Notification System</div>
-			</div>
-		</div>
-
-		
-		<div class="content">
-				<div class="message-container">
-					<div id="message"></div>
-				</div>
-			</div>
-		<div id="form" class="content">
-			<div>
-				<input placeholder="Enter your email" type="email" class="email" id="email"/>
-			</div>
-
-			<div>
-				<button id="subscribe" class="action-btn">Subscribe</button>
-			</div>
-			<div>
-				<button id="unsubscribe" class="action-btn" style="display:none;background-color:#cd2026;border:transparent;">Unsubscribe</button>
-				<span class="unsubscribe">Or if you're already subscribed, you can <a href="javascript:;">unsubscribe here</a>.</span>
-			</div>
-		</div>
-	</div>
-    <canvas id="ecg"></canvas>
-    <footer class="footer text-center">
-        Official Source - 
-        <a href="https://pages.18f.gov/ads-bpa" title="Agile Delivery Services">https://pages.18f.gov/ads-bpa</a>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-git2.min.js"></script>
-	<script src="/resources/js/pleth-graph.js"></script>
-	<script src="/resources/js/pulse.js"></script>
-	<script src="/resources/js/app.js"></script>
-</body>
+        <script src="https://code.jquery.com/jquery-git2.min.js"></script>
+	    <script src="/resources/js/pleth-graph.js"></script>
+	    <script src="/resources/js/pulse.js"></script>
+	    <script src="/resources/js/app.js"></script>
+    </body>
 </html>
