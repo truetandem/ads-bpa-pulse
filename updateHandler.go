@@ -133,7 +133,7 @@ func notify(r *http.Request, ctx context.Context, updates []Solicitation) error 
 
 			return sendEmail(
 				r,
-				"no-reply@truetandem.com",
+				"noreply@ads-bpa-pulse.appspotmail.com",
 				subscriptions,
 				"A pulse was identified for ADS-BPA",
 				plain.String(),
