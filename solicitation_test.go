@@ -35,6 +35,31 @@ func TestSolicitationChecksum(t *testing.T) {
 	}
 }
 
+func TestSolicitationChecksumAfterUpdate(t *testing.T) {
+	expected := "f866a997e7b28e85a438e7415908e4f51edaf43e"
+	s := Solicitation{
+		Title: "Test",
+		Properties: map[string]string{
+			"ID": "TBD",
+		},
+	}
+
+	if s.Sum() != expected {
+		t.FailNow()
+	}
+
+	s.Properties["ID"] = "10000"
+	if s.Sum() == expected {
+		t.FailNow()
+	}
+
+	s.Properties["ID"] = "TBD"
+	s.Properties["New"] = "Test"
+	if s.Sum() == expected {
+		t.FailNow()
+	}
+}
+
 func TestSolicitationGet(t *testing.T) {
 	ctx, done, err := aetest.NewContext()
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -23,8 +24,19 @@ type Solicitation struct {
 // String returns the Solicitation as a formatted string.
 func (s *Solicitation) String() string {
 	str := fmt.Sprintf("Title: %s\n", s.Title)
-	for k, v := range s.Properties {
-		str += fmt.Sprintf("\n  - %s: %s", k, v)
+
+	// Sort the properties because ranging over a map
+	// returns elements in a random order
+	mk := make([]string, len(s.Properties))
+	i := 0
+	for k := range s.Properties {
+		mk[i] = k
+		i++
+	}
+	sort.Strings(mk)
+
+	for _, k := range mk {
+		str += fmt.Sprintf("\n  - %s: %s", k, s.Properties[k])
 	}
 
 	return str
@@ -37,16 +49,19 @@ func (s *Solicitation) Sum() string {
 
 // Get a Solicitation from the datastore.
 func (s *Solicitation) Get(ctx context.Context) (Solicitation, error) {
-	// Create a new key based on the title and attempt get the
-	// entity
-	var sol Solicitation
+	// Create a new solicitation
+	sol := Solicitation{
+		Properties: map[string]string{},
+	}
+
+	// Search by the title and attempt get the entity
 	key := datastore.NewKey(ctx, "Solicitation", s.Title, 0, nil)
-	if err := datastore.Get(ctx, key, sol); err != nil {
+	if err := datastore.Get(ctx, key, &sol); err != nil {
 		return sol, err
 	}
 
 	// Unmarshal the binary JSON and store it as a map
-	if err := json.Unmarshal(sol.JSON, sol.Properties); err != nil {
+	if err := json.Unmarshal(sol.JSON, &sol.Properties); err != nil {
 		return sol, err
 	}
 

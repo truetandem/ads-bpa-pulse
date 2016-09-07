@@ -20,13 +20,14 @@ import (
 var (
 	templateEmailPlain = template.Must(template.ParseFiles("templates/email.txt"))
 	templateEmailHTML  = template.Must(template.ParseFiles("templates/email.html"))
+	feed               = "https://pages.18f.gov/ads-bpa/"
 )
 
 // Update will scrape the source information for solicitations, compare them with
 // previously stored results, and notify the subscribers.
 func Update(w http.ResponseWriter, r *http.Request) {
 	// Query for the document to scrape
-	doc, err := scrape(r, "https://pages.18f.gov/ads-bpa/")
+	doc, err := scrape(r, feed)
 	if err != nil {
 		log.Fatal(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,14 +91,11 @@ func parseDocument(ctx context.Context, doc *goquery.Document) ([]Solicitation, 
 		if s.Title != "" {
 			o, err := s.Get(ctx)
 
-			// If it never existed give it a time
-			if err == datastore.ErrNoSuchEntity {
-				s.Modified = time.Now()
-			}
-
-			// Check for an existing solicitation with a non-matching
-			// checksum of its properties.
-			if err == nil && s.Sum() != o.Sum() {
+			// Update the modified timestamp and include solicitation as an update
+			// when it meets one of the following conditions:
+			//  1. It never existed
+			//  2. An existing solicitation with a non-matching checksum of properties.
+			if err == datastore.ErrNoSuchEntity || (err == nil && s.Sum() != o.Sum()) {
 				s.Modified = time.Now()
 				updates = append(updates, s)
 			}

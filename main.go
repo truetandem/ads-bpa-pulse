@@ -12,6 +12,7 @@ func init() {
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/subscribe", Subscribe)
 	http.HandleFunc("/unsubscribe", Unsubscribe)
+	http.HandleFunc("/test/mail", TestEmail)
 }
 
 func main() {
