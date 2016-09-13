@@ -8,3 +8,6 @@
 --
 
 {{ end }}
+
+
+Official source at [https://pages.18f.gov/ads-bpa](https://pages.18f.gov/ads-bpa). To unsubscribe please visit [https://ads-bpa-pulse.appspot.com](https://ads-bpa-pulse.appspot.com).
