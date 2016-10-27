@@ -1,5 +1,5 @@
 {{ range . }}
-# {{ .Title }}</h1>
+# {{ .Title }}
 
 {{ range $key, $value := .Properties  }}
   - *{{ $key }}*: {{ $value }}
